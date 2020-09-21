@@ -1,4 +1,6 @@
 import csv
+from matplotlib import pyplot as plt
+
 
 filename = 'Data/Moscow weather 2019-2020.csv'
 
@@ -18,10 +20,18 @@ with open(filename) as weather_csv:
     high_previous = 0
     for row in reader:
         filled_high = fill_empty_string(row[12], high_previous)
-        highs.append(filled_high)
+        high_float = float(filled_high)
+        highs.append(high_float)
         high_previous = filled_high
 
 
-print(highs)
+fig = plt.figure(dpi=128, figsize=(10, 6))
+plt.plot(highs, c='red')
 
+plt.title("Максимальная температура воздуха по дням за 2019 год", fontsize=21)
+plt.xlabel('', fontsize=16)
+plt.ylabel("Температура (С)", fontsize=16)
+plt.tick_params(axis='both', which='major', labelsize=16)
+
+plt.show()
 
