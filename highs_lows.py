@@ -1,35 +1,42 @@
 import csv
 from matplotlib import pyplot as plt
+from datetime import datetime
 
 
 filename = 'Data/Moscow weather 2019-2020.csv'
 
 
-def fill_empty_string(string, filler):
-    """Assigns to the "String" variable the value of the "filler", if "string" is empty"""
-    if string == '':
-        return filler
-    else:
-        return string
-
-
 with open(filename) as weather_csv:
     reader = csv.reader(weather_csv)
     header_row = next(reader)
-    highs = []
-    high_previous = 0
+    dates, highs, lows = [], [], []
+
     for row in reader:
-        filled_high = fill_empty_string(row[12], high_previous)
-        high_float = float(filled_high)
-        highs.append(high_float)
-        high_previous = filled_high
+        high_temp = row[12]
+        low_temp = row[14]
+        if high_temp == '' or low_temp == '':
+            continue
+        date_string = row[5]
+        current_date = datetime.strptime(date_string, "%Y-%m-%d")
+        dates.append(current_date)
+
+        high_temp_float = float(high_temp)
+        highs.append(high_temp_float)
+
+        low_temp_float = float(low_temp)
+        lows.append(low_temp_float)
 
 
+print(header_row)
 fig = plt.figure(dpi=128, figsize=(10, 6))
-plt.plot(highs, c='red')
+plt.plot(dates, highs, c='red', alpha=0.5)
+plt.plot(dates, lows, c='blue', alpha=0.5)
+plt.fill_between(dates, highs, lows, facecolor='blue', alpha=0.1)
 
-plt.title("Максимальная температура воздуха по дням за 2019 год", fontsize=21)
+plt.title("Максимальная и минимальная температуры воздуха \n по дням за 2019 - 2020 годы", fontsize=16)
 plt.xlabel('', fontsize=16)
+
+fig.autofmt_xdate()
 plt.ylabel("Температура (С)", fontsize=16)
 plt.tick_params(axis='both', which='major', labelsize=16)
 
